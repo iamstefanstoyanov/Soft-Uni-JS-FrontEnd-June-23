@@ -5,4 +5,3 @@ function person(fname, lname, age) {
   obj.age = age;
   return obj;
 }
-console.log(person('stefan', 'stasi', 23))
