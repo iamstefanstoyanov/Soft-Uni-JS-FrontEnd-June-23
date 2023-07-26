@@ -93,13 +93,11 @@ function attachEvents() {
           e.target.parentNode.parentNode.children[1].textContent;
         let newtitle = document.querySelector('input[name="title"]').value;
         let newauthor = document.querySelector('input[name="author"]').value;
-        console.log(newtitle);
-        console.log(newauthor);
         edit(currentEl,newtitle,newauthor);
       });
     });
   }
-  async function edit(currentEl) {
+  async function edit(currentEl,newtitle,newauthor) {
     try {
       await fetch(
         `http://localhost:3030/jsonstore/collections/books/${currentEl}`,
