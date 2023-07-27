@@ -37,13 +37,27 @@ function attachEvents() {
     deleteBtns();
     editBtns();
   }
-  document
-    .querySelector("#form > button")
-    .addEventListener("click", createNewBook);
+
+  let submitBtn = document.querySelector("#form > button");
+  submitBtn.addEventListener("click", action);
+  let elId = "";
+  function action() {
+    if (submitBtn.textContent === "Submit") {
+      createNewBook();
+    } else {
+      let newtitle = document.querySelector('input[name="title"]').value;
+      let newauthor = document.querySelector('input[name="author"]').value;
+
+      edit(newtitle, newauthor);
+    }
+  }
   async function createNewBook() {
     let title = document.querySelector('input[name="title"]').value;
     let author = document.querySelector('input[name="author"]').value;
     try {
+      if(document.querySelector('input[name="title"]').value === ""||document.querySelector('input[name="author"]').value === ""){
+        throw new Error (console.log('All fields are required!'))
+      }
       await fetch("http://localhost:3030/jsonstore/collections/books", {
         method: "POST",
         body: JSON.stringify({
@@ -59,7 +73,7 @@ function attachEvents() {
     document.querySelector('input[name="title"]').value = "";
     document.querySelector('input[name="author"]').value = "";
   }
-  function deleteBtns() {
+  async function deleteBtns() {
     let delBtns = document.querySelectorAll(
       "tbody > tr > td > button:nth-child(2)"
     );
@@ -86,32 +100,33 @@ function attachEvents() {
       b.addEventListener("click", (e) => {
         document.querySelector("h3").textContent = "Edit FORM";
         document.querySelector("#form > button").textContent = "Save";
-        let currentEl = e.target.parentNode.parentNode.id;
         document.querySelector('input[name="title"]').value =
           e.target.parentNode.parentNode.children[0].textContent;
         document.querySelector('input[name="author"]').value =
           e.target.parentNode.parentNode.children[1].textContent;
-        let newtitle = document.querySelector('input[name="title"]').value;
-        let newauthor = document.querySelector('input[name="author"]').value;
-        edit(currentEl,newtitle,newauthor);
+        let currentEl = e.target.parentNode.parentNode.id;
+        elId = currentEl;
       });
     });
   }
-  async function edit(currentEl,newtitle,newauthor) {
+  async function edit(newtitle, newauthor) {
     try {
-      await fetch(
-        `http://localhost:3030/jsonstore/collections/books/${currentEl}`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            'author': newtitle,
-            'title': newauthor,
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
-          },
-        }
-      );
+      if(document.querySelector('input[name="title"]').value === ""||document.querySelector('input[name="author"]').value === ""){
+        throw new Error (console.log('All fields are required!'))
+      }
+      await fetch(`http://localhost:3030/jsonstore/collections/books/${elId}`, {
+        method: "PUT",
+        body: JSON.stringify({
+          'author': newauthor,
+          'title': newtitle,
+        }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+      elId = "";
+      document.querySelector('input[name="title"]').value = "";
+      document.querySelector('input[name="author"]').value = "";
       loadBooks();
     } catch (e) {}
   }
