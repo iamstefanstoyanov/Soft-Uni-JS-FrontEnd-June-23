@@ -15,14 +15,7 @@ function solve(input){
         switch(action){
             case 'StopForFuel':
             if(ridersInfo[rider].fuel<Number(minFuel)){
-                let currentPosition = ridersInfo[rider].position;
                 ridersInfo[rider].position = Number(newPosition)
-                let newArr = Object.entries(ridersInfo)
-                let riderOnThatPosition = newArr.filter(x=>{
-                    if(x[1].position === Number(newPosition)){
-                        return x[0]
-                    }
-                })
                 console.log(`${rider} stopped to refuel but lost his position, now he is ${Number(newPosition)}.`)
             }else{
                 console.log(`${rider} does not need to stop for fuel!`)
